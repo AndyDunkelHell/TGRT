@@ -7,6 +7,11 @@
 #include "SerialRPC.h"
 #include <Arduino.h>
 #include "mbed.h"
+
+#undef abs
+#undef min
+#undef max
+
 #include <TensorFlowLite.h>
 #include <tensorflow/lite/micro/micro_mutable_op_resolver.h>
 #include <tensorflow/lite/micro/tflite_bridge/micro_error_reporter.h>

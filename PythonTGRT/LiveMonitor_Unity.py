@@ -161,7 +161,7 @@ toggle_metric = False   # Flag for toggling testing metric calculations
 data_buffer = np.empty((0, NUM_CH))  # Buffer for incoming data (assumes NUM_CH channels)
 record_file = None
 metrics_file = None
-_COM_PORT = "COM3"  # Serial port for the Arduino (change as needed)
+_COM_PORT = "COM15"  # Serial port for the Arduino (change as needed)
 
 # Variables for channel toggles and RMS labels
 channel_vars = []  
@@ -1595,14 +1595,24 @@ def start_feed():
     # Start the serial reading in a new daemon thread
     now_str = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     r_filename = "Assets\CUSTOM\BBH_ELECTRODES\TGRT_dataLog.txt"
-    record_file = open(r_filename, 'w')
-    print(f"Recording to {r_filename}")
+    try:
+        record_file = open(r_filename, 'w')
+        print(f"Recording to {r_filename}")
+    except Exception as e:
+        status.config(text="Error opening record file:" + str(e),fg= "red")
+        
+    
 
     metrics_filename = f"Assets\CUSTOM\BBH_ELECTRODES\metrics\Metrics_{now_str}.csv"
-    metrics_file = open(metrics_filename, "w")
-    # Write header for metrics file
-    metrics_file.write("Timestamp;")
-    metrics_file.write("\n")
+    try:
+        metrics_file = open(metrics_filename, "w")
+    except Exception as e:
+        status.config(text="Error opening metrics file:" + str(e),fg= "red")
+        
+    if metrics_file is not None:  
+        # Write header for metrics file
+        metrics_file.write("Timestamp;")
+        metrics_file.write("\n")
     last_metrics_store_time = time.time()
 
     read_thread = threading.Thread(target=read_serial_data, daemon=True)
